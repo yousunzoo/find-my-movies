@@ -13,7 +13,7 @@
     <!-- reset.css -->
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css" />
+      href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.css" />
     <link rel="stylesheet" href="./css/main.scss" />
 
     <script defer type="module" src="./js/main.js"></script>
@@ -27,7 +27,18 @@
         </div>
         <h1>FIND MY MOVIES</h1>
       </header>
-      <main></main>
+      <main>
+        <form class="search">
+          <div class="search__keyword">
+            <select name="years" id="years">
+              <option value="all">All Years</option>
+              <option value="2022">2022</option></select
+            ><input type="text" placeholder="찾을 영화 키워드를 검색해주세요" />
+          </div>
+          <button type="submit" class="search__btn">Search !</button>
+        </form>
+        <div class="result"></div>
+      </main>
       <footer>
         <p>Image by rawpxel.com on Freepik</p>
       </footer>

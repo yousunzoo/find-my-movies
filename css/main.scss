@@ -55,26 +55,31 @@ main {
     display: flex;
     width: 100%;
     height: 60px;
-    padding: 0 14%;
+    padding: 0 12%;
     box-sizing: border-box;
     justify-content: space-between;
     .search__keyword {
       width: 74%;
       border-radius: 10px;
       overflow: hidden;
+      // border: 4px solid $pink2;
+      box-sizing: border-box;
       #years {
         width: 20%;
         height: 100%;
-        border: none;
         outline: none;
+        border: none;
         padding: 0 10px;
         box-sizing: border-box;
         text-align: center;
-        font-size: 16px;
+        font-size: 20px;
         appearance: none;
         color: $search;
         option {
           padding: 4px 2px;
+        }
+        &:focus {
+          border: 4px solid $skyblue;
         }
       }
 
@@ -83,13 +88,14 @@ main {
         height: 100%;
         padding: 0 20px;
         box-sizing: border-box;
+        font-size: 20px;
         border: none;
-        font-size: 16px;
         &::placeholder {
-          color: $search;
+          color: $placeholder;
         }
         &:focus {
           outline: none;
+          border-color: $skyblue;
         }
       }
     }

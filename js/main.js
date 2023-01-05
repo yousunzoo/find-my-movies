@@ -63,12 +63,15 @@ function setMovies(isFirst) {
 
   const liEls = movies.map((movie) => {
     const liEl = document.createElement("li");
-    const titleEl = document.createElement("h2");
-    const posterEl = document.createElement("img");
+    const infoEl = document.createElement("div");
 
-    titleEl.textContent = movie.Title;
-    posterEl.src = movie.Poster;
-    liEl.append(titleEl, posterEl);
+    liEl.innerHTML = `<img src = "${movie.Poster}" alt = "${
+      movie.Title
+    }"/><div><h2>${movie.Title}</h2><span class="year">${
+      movie.Year
+    }</span><span class=${
+      movie.Type === "movie" ? "type-movie" : "type-series"
+    }>${movie.Type}</span></div>`;
 
     return liEl;
   });

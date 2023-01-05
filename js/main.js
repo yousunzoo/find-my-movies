@@ -52,15 +52,31 @@ async function getMovies(title, year, isFirst) {
 
 // 받아온 JSON 데이터 출력
 const resultDiv = document.querySelector(".result");
+const totalEl = document.createElement("p");
+totalEl.classList.add("total");
+
+const moviesEl = document.createElement("ul");
+moviesEl.classList.add("movie-list");
 
 function setMovies(isFirst) {
-  const totalEl = document.createElement("p");
   totalEl.innerHTML = `총 <span>${totalResults}</span>개의 검색결과가 있습니다.`;
-  totalEl.classList.add("total");
+
+  const liEls = movies.map((movie) => {
+    const liEl = document.createElement("li");
+    const titleEl = document.createElement("h2");
+    const posterEl = document.createElement("img");
+
+    titleEl.textContent = movie.Title;
+    posterEl.src = movie.Poster;
+    liEl.append(titleEl, posterEl);
+
+    return liEl;
+  });
 
   if (isFirst) {
     resultDiv.innerHTML = "";
   }
 
-  resultDiv.append(totalEl);
+  resultDiv.append(totalEl, moviesEl);
+  moviesEl.append(...liEls);
 }

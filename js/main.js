@@ -15,3 +15,23 @@ for (let i = year; i >= year - 50; i--) {
   yearEl.textContent = i;
   yearsEl.appendChild(yearEl);
 }
+
+// search 버튼 누르면 API 받아오기
+
+const inputEl = document.querySelector("input");
+const selectEl = document.querySelector("select");
+const SearchEl = document.querySelector(".search__btn");
+SearchEl.addEventListener("click", function (e) {
+  e.preventDefault();
+});
+
+// 영화 API 받아오기
+async function getMovies(title, year) {
+  const s = `$s=${title}`;
+  const y = `$y=${year}`;
+  await fetch(`https://omdbapi.com/?apikey=7035c60c${s}${y}`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => console.log(data));
+}

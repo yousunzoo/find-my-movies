@@ -7,9 +7,9 @@ window.onload = function () {
 
 // select 옵션에 현재 연도로부터 50년 이전까지 연도 별 option 넣기
 const yearsEl = document.querySelector("#years");
-const year = new Date().getFullYear();
+const nowYear = new Date().getFullYear();
 
-for (let i = year; i >= year - 50; i--) {
+for (let i = nowYear; i >= nowYear - 50; i--) {
   let yearEl = document.createElement("option");
   yearEl.value = i;
   yearEl.textContent = i;
@@ -19,13 +19,16 @@ for (let i = year; i >= year - 50; i--) {
 const inputEl = document.querySelector("input");
 const selectEl = document.querySelector("select");
 const SearchEl = document.querySelector(".search__btn");
-
+let count = 1;
 // search 버튼 누르면 inputEl, selectEl value 가져와서 getMovies에 넣기
+
+let title, year;
+
 SearchEl.addEventListener("click", function (e) {
   e.preventDefault();
-  const title = inputEl.value;
-  const year = selectEl.value;
-  getMovies(title, year, true);
+  title = inputEl.value;
+  year = selectEl.value;
+  getMovies(title, year, count, true);
 });
 
 // 영화 API 받아오기
@@ -33,10 +36,11 @@ SearchEl.addEventListener("click", function (e) {
 let movies = [];
 let totalResults;
 
-async function getMovies(title, year, isFirst) {
+async function getMovies(title, year, count, isFirst) {
   const s = `&s=${title}`;
   const y = year === "All Years" ? "" : `&y=${year}`;
-  await fetch(`https://www.omdbapi.com/?apikey=d2f6bdf1${s}${y}`)
+  const page = `&page=${count}`;
+  await fetch(`https://www.omdbapi.com/?apikey=d2f6bdf1${s}${y}${page}`)
     .then((response) => {
       return response.json();
     })
@@ -58,6 +62,7 @@ totalEl.classList.add("total");
 const moviesEl = document.createElement("ul");
 moviesEl.classList.add("movie-list");
 
+// 받아온 데이터 카드 섹션에 붙여넣기
 function setMovies(isFirst) {
   totalEl.innerHTML = `총 <span>${totalResults}</span>개의 검색결과가 있습니다.`;
 
@@ -68,7 +73,6 @@ function setMovies(isFirst) {
     const titleEl = document.createElement("h2");
     const yearEl = document.createElement("span");
     const typeEl = document.createElement("span");
-    console.log(movie.Poster);
     imgEl.src =
       movie.Poster === "N/A" ? require("/images/no_images.png") : movie.Poster;
     imgEl.alt = movie.Title;
@@ -90,3 +94,17 @@ function setMovies(isFirst) {
   resultDiv.append(totalEl, moviesEl);
   moviesEl.append(...liEls);
 }
+
+// 더보기 버튼 클릭시 데이터 더 불러오기
+const moreBtn = document.querySelector(".more");
+moreBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  count += 1;
+  if (count > movies.length / 10 + 1) {
+    console.log("no more answer");
+    return;
+  } else {
+    getMovies(title, year, count, false);
+    return count;
+  }
+});

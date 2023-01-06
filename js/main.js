@@ -103,6 +103,7 @@ function setMovies(isFirst) {
     const yearEl = document.createElement("span");
     const typeEl = document.createElement("span");
     aEl.href = "javascript:void(0)";
+    liEl.dataset.id = movie.imdbID;
     imgEl.src =
       movie.Poster === "N/A" ? require("/images/no_images.png") : movie.Poster;
     imgEl.alt = movie.Title;
@@ -122,7 +123,6 @@ function setMovies(isFirst) {
     resultDiv.innerHTML = "";
     moviesEl.innerHTML = "";
   }
-
   moviesEl.append(...liEls);
   resultDiv.append(totalEl, moviesEl, moreBtn);
   popup();
@@ -157,15 +157,26 @@ function popup() {
 
   for (let i = 0; i < cardEl.length; i++) {
     cardEl[i].addEventListener("click", (e) => {
+      const movieId = cardEl[i].dataset.id;
+
       e.preventDefault();
-      console.log(i);
       modalWrapper.append(modalEl);
       wrap.append(modalWrapper);
       body.classList.add("stop-scrolling");
+
+      getMovieInfo(movieId);
     });
   }
   modalWrapper.addEventListener("click", function () {
     wrap.removeChild(modalWrapper);
     body.classList.remove("stop-scrolling");
   });
+}
+
+async function getMovieInfo(movieId) {
+  await fetch(`https://omdbapi.com/?apikey=7035c60c&i=${movieId}&plot=full`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => console.log(data));
 }

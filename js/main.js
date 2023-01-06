@@ -63,15 +63,22 @@ function setMovies(isFirst) {
 
   const liEls = movies.map((movie) => {
     const liEl = document.createElement("li");
+    const imgEl = document.createElement("img");
     const infoEl = document.createElement("div");
-
-    liEl.innerHTML = `<img src = "${movie.Poster}" alt = "${
-      movie.Title
-    }"/><div><h2>${movie.Title}</h2><span class="year">${
-      movie.Year
-    }</span><span class=${
-      movie.Type === "movie" ? "type-movie" : "type-series"
-    }>${movie.Type}</span></div>`;
+    const titleEl = document.createElement("h2");
+    const yearEl = document.createElement("span");
+    const typeEl = document.createElement("span");
+    console.log(movie.Poster);
+    imgEl.src =
+      movie.Poster === "N/A" ? require("/images/no_images.png") : movie.Poster;
+    imgEl.alt = movie.Title;
+    titleEl.textContent = movie.Title;
+    yearEl.textContent = movie.Year;
+    yearEl.classList.add("year");
+    typeEl.classList.add(movie.Type === "movie" ? "type-movie" : "type-series");
+    typeEl.textContent = movie.Type;
+    infoEl.append(titleEl, yearEl, typeEl);
+    liEl.append(imgEl, infoEl);
 
     return liEl;
   });

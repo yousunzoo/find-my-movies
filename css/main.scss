@@ -28,6 +28,9 @@
   }
 }
 
+body.stop-scrolling {
+  overflow: hidden;
+}
 // 1440px
 #wrap {
   min-width: 1440px;
@@ -175,6 +178,7 @@ main {
       grid-auto-rows: 420px;
       gap: 60px 4%;
       li {
+        max-width: 250px;
         overflow: hidden;
         background-color: $white;
         border-radius: 10px;
@@ -182,39 +186,44 @@ main {
         transform: translateY(0);
         cursor: pointer;
         box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
-        img {
-          min-width: 100%;
-          height: 320px;
-        }
-        div {
-          padding: 20px;
-          box-sizing: border-box;
-          height: 100px;
-          h2 {
-            font-size: 20px;
-            margin-bottom: 12px;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-            font-weight: 600;
+        a {
+          display: block;
+          text-decoration: none;
+          color: #333;
+          img {
+            min-width: 100%;
+            height: 320px;
           }
-          span {
-            display: inline-block;
-            padding: 4px 6px;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: 500;
-            color: $white;
-          }
-          .year {
-            margin-right: 6px;
-            background-color: $year;
-          }
-          .type-movie {
-            background-color: $movie;
-          }
-          .type-series {
-            background-color: $series;
+          div {
+            padding: 20px;
+            box-sizing: border-box;
+            height: 100px;
+            h2 {
+              font-size: 20px;
+              margin-bottom: 12px;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
+              font-weight: 600;
+            }
+            span {
+              display: inline-block;
+              padding: 4px 6px;
+              border-radius: 5px;
+              font-size: 14px;
+              font-weight: 500;
+              color: $white;
+            }
+            .year {
+              margin-right: 6px;
+              background-color: $year;
+            }
+            .type-movie {
+              background-color: $movie;
+            }
+            .type-series {
+              background-color: $series;
+            }
           }
         }
         &:hover {
@@ -228,6 +237,40 @@ main {
       font-weight: 500;
       padding: 50px 0;
     }
+    .more {
+      display: block;
+      margin: auto;
+      margin-top: 100px;
+      border: 0;
+      outline: 0;
+      background-color: #fff;
+      font-size: 20px;
+      border-radius: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  }
+}
+
+#modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.1);
+  .modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 50%;
+    height: 80%;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
   }
 }
 

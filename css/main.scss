@@ -1,5 +1,33 @@
 @import "variables.scss";
 
+// loader
+.loader {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  border: 3px solid $white;
+  border: {
+    right-color: $loader;
+    radius: 100%;
+  }
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 // 1440px
 #wrap {
   min-width: 1440px;
@@ -42,7 +70,7 @@ header {
     text-align: center;
     color: $yellow;
     font: {
-      size: 130px;
+      size: 120px;
       weight: 900;
     }
   }
@@ -116,11 +144,19 @@ main {
     }
   }
   .result {
+    position: relative;
     padding: 100px 0;
     // background-color: #fff;
     width: 100%;
-    height: 100%;
-
+    min-height: 200px;
+    .no-result {
+      text-align: center;
+      font: {
+        size: 28px;
+        weight: 700;
+      }
+      color: $total;
+    }
     .total {
       text-align: center;
       font-size: 24px;
@@ -185,6 +221,12 @@ main {
           transform: translateY(-20px);
         }
       }
+    }
+    .no-more {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 500;
+      padding: 50px 0;
     }
   }
 }

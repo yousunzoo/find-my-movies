@@ -21,14 +21,27 @@ const selectEl = document.querySelector("select");
 const SearchEl = document.querySelector(".search__btn");
 let count = 1;
 // search 버튼 누르면 inputEl, selectEl value 가져와서 getMovies에 넣기
+// loading 중일 때 .loader 삽입, fetch되면 .loader 제거
 
 let title, year;
+const loaderEl = document.createElement("div");
+loaderEl.classList.add("loader");
+const noResultEl = document.createElement("p");
+noResultEl.classList.add("no-result");
+noResultEl.textContent = "검색 키워드를 입력해주세요!";
 
 SearchEl.addEventListener("click", function (e) {
   e.preventDefault();
   title = inputEl.value;
   year = selectEl.value;
-  getMovies(title, year, count, true);
+  if (title === "") {
+    resultDiv.append(noResultEl);
+    return;
+  } else {
+    resultDiv.innerHTML = "";
+    resultDiv.append(loaderEl);
+    getMovies(title, year, count, true);
+  }
 });
 
 // 영화 API 받아오기
@@ -97,11 +110,15 @@ function setMovies(isFirst) {
 
 // 더보기 버튼 클릭시 데이터 더 불러오기
 const moreBtn = document.querySelector(".more");
+const noMoreEl = document.createElement("p");
+noMoreEl.textContent = "더 이상의 검색 결과가 없습니다!";
+noMoreEl.classList.add("no-more");
+
 moreBtn.addEventListener("click", function (e) {
   e.preventDefault();
   count += 1;
   if (count > movies.length / 10 + 1) {
-    console.log("no more answer");
+    resultDiv.append(noMoreEl);
     return;
   } else {
     getMovies(title, year, count, false);

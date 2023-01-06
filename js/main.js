@@ -67,7 +67,10 @@ async function getMovies(title, year, count, isFirst) {
         totalResults = data.totalResults;
         setMovies(isFirst);
       } else {
-        noResultEl.textContent = `"${title}"을 포함하는 영화가 없습니다.`;
+        noResultEl.textContent =
+          title.length < 3
+            ? `3글자 이상 입력해주세요.`
+            : `"${title}"을 포함하는 영화가 없습니다.`;
         resultDiv.innerHTML = "";
         resultDiv.append(noResultEl);
       }

@@ -1,13 +1,28 @@
-// 페이지 접속 시 배너 클래스 추가
+// variables
 const bannerEl = document.querySelector(".banner");
+
+const resultDiv = document.querySelector(".result");
+const yearsEl = document.querySelector("#years");
+const nowYear = new Date().getFullYear();
+const inputEl = document.querySelector("input");
+const selectEl = document.querySelector("select");
+const SearchEl = document.querySelector(".search__btn");
+
+let count = 1;
+let title, year;
+const loaderEl = document.createElement("div");
+loaderEl.classList.add("loader");
+const noResultEl = document.createElement("p");
+noResultEl.classList.add("no-result");
+noResultEl.textContent = "검색 키워드를 입력해주세요!";
+
+// 페이지 접속 시 배너 클래스 추가
 
 window.onload = function () {
   bannerEl.classList.add("loaded");
 };
 
 // select 옵션에 현재 연도로부터 50년 이전까지 연도 별 option 넣기
-const yearsEl = document.querySelector("#years");
-const nowYear = new Date().getFullYear();
 
 for (let i = nowYear; i >= nowYear - 50; i--) {
   let yearEl = document.createElement("option");
@@ -16,19 +31,8 @@ for (let i = nowYear; i >= nowYear - 50; i--) {
   yearsEl.appendChild(yearEl);
 }
 
-const inputEl = document.querySelector("input");
-const selectEl = document.querySelector("select");
-const SearchEl = document.querySelector(".search__btn");
-let count = 1;
 // search 버튼 누르면 inputEl, selectEl value 가져와서 getMovies에 넣기
 // loading 중일 때 .loader 삽입, fetch되면 .loader 제거
-
-let title, year;
-const loaderEl = document.createElement("div");
-loaderEl.classList.add("loader");
-const noResultEl = document.createElement("p");
-noResultEl.classList.add("no-result");
-noResultEl.textContent = "검색 키워드를 입력해주세요!";
 
 SearchEl.addEventListener("click", function (e) {
   e.preventDefault();
@@ -62,13 +66,15 @@ async function getMovies(title, year, count, isFirst) {
         movies = data.Search;
         totalResults = data.totalResults;
         setMovies(isFirst);
+      } else {
+        noResultEl.textContent = `"${title}"을 포함하는 영화가 없습니다.`;
+        resultDiv.innerHTML = "";
+        resultDiv.append(noResultEl);
       }
-      return data.Error;
     });
 }
 
 // 받아온 JSON 데이터 출력
-const resultDiv = document.querySelector(".result");
 const totalEl = document.createElement("p");
 totalEl.classList.add("total");
 
@@ -102,10 +108,11 @@ function setMovies(isFirst) {
 
   if (isFirst) {
     resultDiv.innerHTML = "";
+    moviesEl.innerHTML = "";
   }
 
-  resultDiv.append(totalEl, moviesEl);
   moviesEl.append(...liEls);
+  resultDiv.append(totalEl, moviesEl);
 }
 
 // 더보기 버튼 클릭시 데이터 더 불러오기

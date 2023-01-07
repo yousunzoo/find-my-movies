@@ -146,20 +146,24 @@ moreBtn.addEventListener("click", function (e) {
   }
 });
 
+// 카드 클릭했을 때 모달창 등장 및 document scoll 처리
+const body = document.querySelector("body");
+const modalWrapper = document.createElement("div");
+modalWrapper.id = "modal";
+const modalEl = document.createElement("div");
+modalEl.classList.add("modal-container");
+
 function popup() {
-  // 카드 클릭했을 때 모달창 등장 및 document scoll 처리
-  const body = document.querySelector("body");
   const cardEl = moviesEl.querySelectorAll("li");
-  const modalWrapper = document.createElement("div");
-  modalWrapper.id = "modal";
-  const modalEl = document.createElement("div");
-  modalEl.classList.add("modal-container");
 
   for (let i = 0; i < cardEl.length; i++) {
     cardEl[i].addEventListener("click", (e) => {
       const movieId = cardEl[i].dataset.id;
 
       e.preventDefault();
+
+      modalEl.innerHTML = "";
+      modalEl.append(loaderEl);
       modalWrapper.append(modalEl);
       wrap.append(modalWrapper);
       body.classList.add("stop-scrolling");
@@ -178,5 +182,58 @@ async function getMovieInfo(movieId) {
     .then((response) => {
       return response.json();
     })
-    .then((data) => console.log(data));
+    .then((data) => {
+      setMovieInfo(data);
+    });
+}
+
+function setMovieInfo(movie) {
+  // 이미지 고해상도 출력
+  const background = document.createElement("div");
+  const url =
+    movie.Poster === "N/A"
+      ? require("/images/no_images.png")
+      : movie.Poster.replace("X300", "X640");
+
+  const infoInnerEl = document.createElement("div");
+  const imgEl = document.createElement("img");
+  const h2El = document.createElement("h2");
+  const innerLEl = document.createElement("div");
+  const innerREl = document.createElement("div");
+  const infoListEl = document.createElement("div");
+  const genreListEl = document.createElement("span");
+  const yearEl = document.createElement("span");
+  const timeEl = document.createElement("span");
+  const directorEl = document.createElement("span");
+  const rateEl = document.createElement("span");
+  const plotEl = document.createElement("p");
+  const castEl = document.createElement("div");
+
+  innerLEl.classList.add("inner-left");
+  innerREl.classList.add("inner-right");
+  background.classList.add("background");
+  infoInnerEl.classList.add("info-inner");
+  infoListEl.classList.add("info-list");
+  genreListEl.classList.add("genre-list");
+  plotEl.classList.add("plot");
+  rateEl.classList.add("rate");
+  castEl.classList.add("cast");
+
+  imgEl.src = url;
+  h2El.textContent = movie.Title;
+  yearEl.textContent = movie.Year;
+  timeEl.textContent = movie.Runtime.replace("min", "minutes");
+  directorEl.textContent = movie.Director;
+  genreListEl.textContent = movie.Genre;
+  plotEl.textContent = movie.Plot === "N/A" ? "" : movie.Plot;
+  rateEl.innerHTML = `<span>&#9733;</span> ${movie.imdbRating}`;
+  castEl.innerHTML = `<h3>Casts</h3><p>${movie.Actors}</p>`;
+  innerLEl.append(imgEl);
+  infoListEl.append(yearEl, timeEl, directorEl);
+  innerREl.append(h2El, infoListEl, genreListEl, rateEl, plotEl, castEl);
+
+  infoInnerEl.append(innerLEl, innerREl);
+
+  modalEl.innerHTML = "";
+  modalEl.append(background, infoInnerEl);
 }

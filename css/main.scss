@@ -200,7 +200,7 @@ main {
             height: 100px;
             h2 {
               font-size: 20px;
-              margin-bottom: 12px;
+              margin-bottom: 14px;
               text-overflow: ellipsis;
               overflow: hidden;
               white-space: nowrap;
@@ -209,20 +209,21 @@ main {
             span {
               display: inline-block;
               padding: 4px 6px;
-              border-radius: 5px;
+              border-radius: 10px;
+              border: 2px solid $year;
               font-size: 14px;
               font-weight: 500;
-              color: $white;
+              color: $text;
             }
             .year {
               margin-right: 6px;
-              background-color: $year;
+              border-color: $year;
             }
             .type-movie {
-              background-color: $movie;
+              border-color: $movie;
             }
             .type-series {
-              background-color: $series;
+              border-color: $series;
             }
           }
         }
@@ -266,11 +267,98 @@ main {
     right: 0;
     bottom: 0;
     margin: auto;
-    width: 50%;
-    height: 80%;
-    background-color: #fff;
+    width: 1000px;
+    height: 600px;
     border-radius: 20px;
+    overflow: hidden;
+    background-color: #fff9f9;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+
+    .info-inner {
+      display: flex;
+      height: 100%;
+      justify-content: space-between;
+      position: absolute;
+      top: 50%;
+      padding: 0 40px;
+      box-sizing: border-box;
+      transform: translateY(-50%);
+      .inner-left {
+        img {
+          max-width: 400px;
+          height: 100%;
+          margin-right: 40px;
+        }
+      }
+      .inner-right {
+        padding-top: 40px;
+        color: $text;
+        h2 {
+          font-size: 30px;
+          font-weight: 700;
+          margin-bottom: 20px;
+          text-align: left;
+        }
+        .info-list {
+          display: flex;
+          margin-bottom: 14px;
+          align-items: center;
+          font-size: 18px;
+
+          span {
+            position: relative;
+            margin-right: 20px;
+            &::before {
+              position: absolute;
+              right: -10px;
+              top: 50%;
+              transform: translateY(-50%);
+              content: "";
+              width: 2px;
+              height: 14px;
+              background-color: $text;
+            }
+            &:last-child::before {
+              display: none;
+            }
+          }
+        }
+        .genre-list {
+          font-size: 18px;
+          font-style: italic;
+          margin-right: 20px;
+        }
+        .rate {
+          font-size: 18px;
+          span {
+            color: $loader;
+          }
+          font-weight: 700;
+        }
+        .plot {
+          margin-top: 30px;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 10;
+          font-size: 20px;
+          line-height: 1.6;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .cast {
+          margin-top: 40px;
+          h3 {
+            font-size: 24px;
+            font-weight: 700;
+          }
+          p {
+            margin-top: 20px;
+            font-size: 18px;
+            line-height: 1.6;
+          }
+        }
+      }
+    }
   }
 }
 

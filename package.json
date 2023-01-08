@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/yousunzoo/KDT4-M2#readme",
   "dependencies": {
+    "gsap": "^3.11.4",
     "scss": "^0.2.4"
   },
   "devDependencies": {

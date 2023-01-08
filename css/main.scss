@@ -369,3 +369,30 @@ footer {
     color: $footer;
   }
 }
+
+#to-top {
+  position: fixed;
+  bottom: 60px;
+  right: -100px;
+  width: 80px;
+  height: 80px;
+  background-color: #fff;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  span {
+    font-size: 40px;
+    color: $skyblue;
+  }
+  &:hover {
+    background-color: $skyblue;
+    span {
+      color: $white;
+    }
+  }
+}

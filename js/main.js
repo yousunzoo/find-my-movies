@@ -24,6 +24,7 @@ const SearchEl = document.querySelector(".search__btn");
 const resultDiv = document.querySelector(".result");
 
 let count = 1;
+let getData;
 let title, year;
 const loaderEl = document.createElement("div");
 loaderEl.classList.add("loader");
@@ -34,7 +35,7 @@ const moreBtn = document.createElement("button");
 moreBtn.classList.add("more");
 moreBtn.textContent = "더보기";
 
-SearchEl.addEventListener("click", function (e) {
+SearchEl.addEventListener("click", async function (e) {
   e.preventDefault();
   title = inputEl.value;
   year = selectEl.value;
@@ -45,7 +46,11 @@ SearchEl.addEventListener("click", function (e) {
     count = 1;
     resultDiv.innerHTML = "";
     resultDiv.append(loaderEl);
-    getMovies(title, year, count, true);
+    await getMovies(title, year, count, true);
+    if (getData.Response === "True") {
+      count++;
+      getMovies(title, year, count, false);
+    }
   }
 });
 
@@ -72,6 +77,7 @@ async function getMovies(title, year, count, isFirst) {
             ? totalResults / 10
             : parseInt(totalResults / 10) + 1;
         setMovies(isFirst);
+        getData = data;
       } else {
         noResultEl.textContent =
           title.length < 3

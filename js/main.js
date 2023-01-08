@@ -47,7 +47,7 @@ SearchEl.addEventListener("click", async function (e) {
     resultDiv.innerHTML = "";
     resultDiv.append(loaderEl);
     await getMovies(title, year, count, true);
-    if (getData.Response === "True") {
+    if (getData.Response === "True" && totalPages > 1) {
       count++;
       getMovies(title, year, count, false);
     }
@@ -130,7 +130,10 @@ function setMovies(isFirst) {
     moviesEl.innerHTML = "";
   }
   moviesEl.append(...liEls);
-  resultDiv.append(totalEl, moviesEl, moreBtn);
+  resultDiv.append(totalEl, moviesEl);
+  if (totalPages > 1) {
+    resultDiv.append(moreBtn);
+  }
   popup();
 }
 

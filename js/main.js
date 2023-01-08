@@ -24,7 +24,7 @@ toTopEl.addEventListener("click", function () {
   });
 });
 
-// 페이지 접속 시 배너 클래스 추가
+// 페이지 접속 시 배너 클래스 추가 (transition)
 const wrap = document.querySelector("#wrap");
 const bannerEl = document.querySelector(".banner");
 window.onload = function () {
@@ -102,9 +102,9 @@ async function getMovies(title, year, count, isFirst) {
           totalResults % 10 === 0
             ? totalResults / 10
             : parseInt(totalResults / 10) + 1;
-        setMovies(isFirst);
+        setMovies(isFirst, data);
         getData = data;
-      } else {
+      } else if (isFirst === true) {
         noResultEl.textContent =
           title.length < 3
             ? `3글자 이상 입력해주세요.`
@@ -123,7 +123,7 @@ const moviesEl = document.createElement("ul");
 moviesEl.classList.add("movie-list");
 
 // 받아온 데이터 카드 섹션에 붙여넣기
-function setMovies(isFirst) {
+function setMovies(isFirst, data) {
   totalEl.innerHTML = `총 <span>${totalResults}</span>개의 검색결과가 있습니다.`;
 
   const liEls = movies.map((movie) => {
@@ -157,17 +157,28 @@ function setMovies(isFirst) {
   }
   moviesEl.append(...liEls);
   resultDiv.append(totalEl, moviesEl);
-  if (totalPages > 1) {
-    resultDiv.append(moreBtn);
-  }
   popup();
+
+  // 무한 스크롤 구현
+  window.onscroll = async function (e) {
+    // 무한 스크롤
+    if (
+      data.Response === "True" &&
+      window.innerHeight + window.scrollY >= resultDiv.offsetHeight
+    ) {
+      // 실행할 로직
+      count++;
+      await getMovies(title, year, count, false);
+    }
+
+    return count;
+  };
 }
 
-// 더보기 버튼 클릭시 데이터 더 불러오기
-const noMoreEl = document.createElement("p");
-noMoreEl.textContent = "더 이상의 검색 결과가 없습니다!";
-noMoreEl.classList.add("no-more");
-
+/** 더보기 버튼 클릭시 데이터 더 불러오기
+ *     const noMoreEl = document.createElement("p");
+    noMoreEl.textContent = "더 이상의 검색 결과가 없습니다!";
+    noMoreEl.classList.add("no-more");
 moreBtn.addEventListener("click", function (e) {
   e.preventDefault();
   count += 1;
@@ -180,13 +191,17 @@ moreBtn.addEventListener("click", function (e) {
     return count;
   }
 });
+ */
 
-// 카드 클릭했을 때 모달창 등장 및 document scoll 처리
+// 카드 클릭했을 때 모달창 등장 및 document scoll 처리, to-top 버튼 숨김
 const body = document.querySelector("body");
 const modalWrapper = document.createElement("div");
-modalWrapper.id = "modal";
+const modalOverlayEl = document.createElement("div");
 const modalEl = document.createElement("div");
+
+modalWrapper.id = "modal";
 modalEl.classList.add("modal-container");
+modalOverlayEl.classList.add("modal-overlay");
 
 function popup() {
   const cardEl = moviesEl.querySelectorAll("li");
@@ -199,16 +214,28 @@ function popup() {
 
       modalEl.innerHTML = "";
       modalEl.append(loaderEl);
-      modalWrapper.append(modalEl);
+      modalWrapper.append(modalOverlayEl, modalEl);
       wrap.append(modalWrapper);
       body.classList.add("stop-scrolling");
-
+      toTopEl.classList.add("hide");
       getMovieInfo(movieId);
     });
   }
-  modalWrapper.addEventListener("click", function () {
+
+  // 모달 창 밖 영역 클릭하면 모달창 꺼지게 하기
+  modalOverlayEl.addEventListener("click", function () {
     wrap.removeChild(modalWrapper);
     body.classList.remove("stop-scrolling");
+    toTopEl.classList.remove("hide");
+  });
+
+  // esc 버튼 누르면 모달창 꺼지게 하기
+  window.addEventListener("keyup", function (e) {
+    if (e.key === "Escape") {
+      wrap.removeChild(modalWrapper);
+      body.classList.remove("stop-scrolling");
+      toTopEl.classList.remove("hide");
+    }
   });
 }
 

@@ -48,6 +48,9 @@ for (let i = nowYear; i >= nowYear - 50; i--) {
 
 const SearchEl = document.querySelector(".search__btn");
 const resultDiv = document.querySelector(".result");
+const detectorEl = document.createElement("div");
+detectorEl.classList.add("scroll-detecting");
+resultDiv.append(detectorEl);
 
 let count = 1;
 let getData;
@@ -123,7 +126,7 @@ const moviesEl = document.createElement("ul");
 moviesEl.classList.add("movie-list");
 
 // 받아온 데이터 카드 섹션에 붙여넣기
-function setMovies(isFirst, data) {
+function setMovies(isFirst) {
   totalEl.innerHTML = `총 <span>${totalResults}</span>개의 검색결과가 있습니다.`;
 
   const liEls = movies.map((movie) => {
@@ -155,25 +158,26 @@ function setMovies(isFirst, data) {
     resultDiv.innerHTML = "";
     moviesEl.innerHTML = "";
   }
+  // resultDiv.removeChild(detectorEl);
   moviesEl.append(...liEls);
-  resultDiv.append(totalEl, moviesEl);
+  resultDiv.append(totalEl, moviesEl, detectorEl);
   popup();
 
-  // 무한 스크롤 구현
-  window.onscroll = async function (e) {
-    // 무한 스크롤
-    if (
-      data.Response === "True" &&
-      window.innerHeight + window.scrollY >= resultDiv.offsetHeight
-    ) {
-      // 실행할 로직
-      count++;
-      await getMovies(title, year, count, false);
-    }
+  const detector = document.querySelector(".scroll-detecting");
 
-    return count;
-  };
+  const io = new IntersectionObserver((entries) => {
+    if (entries.some((entry) => entry.intersectionRatio > 0)) {
+      count++;
+
+      getMovies(title, year, count, false);
+      return count;
+    }
+  });
+
+  io.observe(detector);
 }
+
+// intersectionObserver로 무한 스크롤 구현
 
 /** 더보기 버튼 클릭시 데이터 더 불러오기
  *     const noMoreEl = document.createElement("p");

@@ -104,10 +104,7 @@ async function getMovies(title, year, count, isFirst) {
       if (data.Response === "True") {
         movies = data.Search;
         totalResults = data.totalResults;
-        totalPages =
-          totalResults % 10 === 0
-            ? totalResults / 10
-            : parseInt(totalResults / 10) + 1;
+        totalPages = Math.ceil(totalResults / 10);
         setMovies(isFirst, data);
         getData = data;
       } else if (isFirst === true) {

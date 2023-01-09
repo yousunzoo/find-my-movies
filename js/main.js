@@ -50,7 +50,6 @@ const SearchEl = document.querySelector(".search__btn");
 const resultDiv = document.querySelector(".result");
 const detectorEl = document.createElement("div");
 detectorEl.classList.add("scroll-detecting");
-resultDiv.append(detectorEl);
 
 let count = 1;
 let getData;
@@ -79,6 +78,7 @@ SearchEl.addEventListener("click", async function (e) {
     loaderDiv.append(loaderEl);
     resultDiv.append(loaderDiv);
     await getMovies(title, year, count, true);
+
     if (getData.Response === "True" && totalPages > 1) {
       count++;
       getMovies(title, year, count, false);
@@ -158,44 +158,33 @@ function setMovies(isFirst) {
     resultDiv.innerHTML = "";
     moviesEl.innerHTML = "";
   }
-  // resultDiv.removeChild(detectorEl);
-  moviesEl.append(...liEls);
-  resultDiv.append(totalEl, moviesEl, detectorEl);
+  moviesEl.append(...liEls, detectorEl);
+  resultDiv.append(totalEl, moviesEl);
   popup();
 
-  const detector = document.querySelector(".scroll-detecting");
-
-  const io = new IntersectionObserver((entries) => {
-    if (entries.some((entry) => entry.intersectionRatio > 0)) {
+  // 무한스크롤 구현
+  let callback = (entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
       count++;
-
+      console.log(count);
       getMovies(title, year, count, false);
       return count;
-    }
-  });
+    });
+  };
 
-  io.observe(detector);
+  let options = {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.5,
+  };
+
+  let observer = new IntersectionObserver(callback, options);
+
+  // 타겟 요소 관찰 시작
+  let target = document.querySelector(".movie-list").lastElementChild;
+  observer.observe(target);
 }
-
-// intersectionObserver로 무한 스크롤 구현
-
-/** 더보기 버튼 클릭시 데이터 더 불러오기
- *     const noMoreEl = document.createElement("p");
-    noMoreEl.textContent = "더 이상의 검색 결과가 없습니다!";
-    noMoreEl.classList.add("no-more");
-moreBtn.addEventListener("click", function (e) {
-  e.preventDefault();
-  count += 1;
-  if (count > totalPages) {
-    moreBtn.remove();
-    resultDiv.append(noMoreEl);
-    return;
-  } else {
-    getMovies(title, year, count, false);
-    return count;
-  }
-});
- */
 
 // 카드 클릭했을 때 모달창 등장 및 document scoll 처리, to-top 버튼 숨김
 const body = document.querySelector("body");
@@ -217,7 +206,7 @@ function popup() {
       e.preventDefault();
 
       modalEl.innerHTML = "";
-      modalEl.append(loaderEl);
+      modalEl.append(loaderDiv);
       modalWrapper.append(modalOverlayEl, modalEl);
       wrap.append(modalWrapper);
       body.classList.add("stop-scrolling");

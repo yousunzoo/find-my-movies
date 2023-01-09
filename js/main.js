@@ -55,7 +55,9 @@ resultDiv.append(detectorEl);
 let count = 1;
 let getData;
 let title, year;
+const loaderDiv = document.createElement("div");
 const loaderEl = document.createElement("div");
+loaderDiv.classList.add("loader-container");
 loaderEl.classList.add("loader");
 const noResultEl = document.createElement("p");
 noResultEl.classList.add("no-result");
@@ -74,7 +76,8 @@ SearchEl.addEventListener("click", async function (e) {
   } else {
     count = 1;
     resultDiv.innerHTML = "";
-    resultDiv.append(loaderEl);
+    loaderDiv.append(loaderEl);
+    resultDiv.append(loaderDiv);
     await getMovies(title, year, count, true);
     if (getData.Response === "True" && totalPages > 1) {
       count++;

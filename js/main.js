@@ -127,6 +127,7 @@ totalEl.classList.add("total");
 
 const moviesEl = document.createElement("ul");
 moviesEl.classList.add("movie-list");
+
 // 받아온 데이터 카드 섹션에 붙여넣기
 function setMovies() {
   // 불러오는 동안에는 무한스크롤 불가
@@ -137,16 +138,21 @@ function setMovies() {
   const liEls = movies.map((movie) => {
     const liEl = document.createElement("li");
     const aEl = document.createElement("a");
-    const imgEl = document.createElement("img");
+    const imgEl = document.createElement("div");
     const infoEl = document.createElement("div");
     const titleEl = document.createElement("h2");
     const yearEl = document.createElement("span");
     const typeEl = document.createElement("span");
+
+    const url =
+      movie.Poster === "N/A"
+        ? require("../images/no_images.png")
+        : movie.Poster;
+
     aEl.href = "javascript:void(0)";
+    imgEl.classList.add("background");
+    imgEl.style.backgroundImage = `url(${url})`;
     liEl.dataset.id = movie.imdbID;
-    imgEl.src =
-      movie.Poster === "N/A" ? require("/images/no_images.png") : movie.Poster;
-    imgEl.alt = movie.Title;
     titleEl.textContent = movie.Title;
     yearEl.textContent = movie.Year;
     yearEl.classList.add("year");
@@ -232,12 +238,11 @@ function setMovieInfo(movie) {
   const background = document.createElement("div");
   const url =
     movie.Poster === "N/A"
-      ? require("/images/no_images.png")
-      : movie.Poster.replace("X300", "X640");
+      ? require("../images/no_images.png")
+      : movie.Poster.replace("X300", "X600");
 
   // 생성할 요소들
   const infoInnerEl = document.createElement("div");
-  const imgEl = document.createElement("img");
   const h2El = document.createElement("h2");
   const innerLEl = document.createElement("div");
   const innerREl = document.createElement("div");
@@ -264,7 +269,7 @@ function setMovieInfo(movie) {
   closeBtn.classList.add("close-btn");
 
   // 요소에 들어갈 내용 세팅
-  imgEl.src = url;
+  innerLEl.style.backgroundImage = `url(${url})`;
   h2El.textContent = movie.Title;
   yearEl.textContent = movie.Year;
   timeEl.textContent = movie.Runtime.replace("min", "minutes");
@@ -277,7 +282,6 @@ function setMovieInfo(movie) {
   close
   </span>`;
 
-  innerLEl.append(imgEl);
   infoListEl.append(yearEl, timeEl, directorEl);
   innerREl.append(h2El, infoListEl, genreListEl, rateEl, plotEl, castEl);
 

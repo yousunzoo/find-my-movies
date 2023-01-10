@@ -67,10 +67,12 @@ SearchEl.addEventListener("click", async function (e) {
   year = selectEl.value;
   isFirst = true;
 
+  // 입력 내용 없을 시 noResultEl 삽입
   if (title === "") {
     resultDiv.append(noResultEl);
     return;
   } else {
+    // 영화 검색 실행
     count = 1;
     resultDiv.innerHTML = "";
     loaderDiv.append(loaderEl);
@@ -100,12 +102,14 @@ async function getMovies(title, year, count) {
     })
     .then((data) => {
       if (data.Response === "True") {
+        // data 응답 성공 시 setMovies 실행
         movies = data.Search;
         totalResults = data.totalResults;
         totalPages = Math.ceil(totalResults / 10);
         setMovies(data);
         getData = data;
       } else if (isFirst) {
+        // 오류 메세지 출력
         noResultEl.textContent =
           title.length < 3
             ? `3글자 이상 입력해주세요.`
@@ -259,6 +263,7 @@ function setMovieInfo(movie) {
   castEl.classList.add("cast");
   closeBtn.classList.add("close-btn");
 
+  // 요소에 들어갈 내용 세팅
   imgEl.src = url;
   h2El.textContent = movie.Title;
   yearEl.textContent = movie.Year;

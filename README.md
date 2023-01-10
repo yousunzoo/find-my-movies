@@ -1,8 +1,10 @@
 # 🎬 FIND MY MOVIES
 
+- 데모 사이트 : [FIND MY MOVIES](https://coruscating-klepon-9efb9d.netlify.app/)
+
 - 작업 기간 : 2023.01.03 ~ 2023.01.10
 - 사용 언어 : `HTML`, `SCSS`, `Javascript`
-- 사용 라이브러리 : GSAP
+- 사용 라이브러리 : `GSAP`
 
 - 목표 : OMDb API를 활용해 영화 검색 기능 구현하기
   <br /><br /><br /><br />
@@ -30,4 +32,4 @@
 
 ---
 
-## 사이트 소개
+## ✨ 사이트 소개

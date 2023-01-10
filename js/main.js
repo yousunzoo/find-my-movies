@@ -45,15 +45,14 @@ for (let i = nowYear; i >= nowYear - 50; i--) {
 
 // search 버튼 누르면 inputEl, selectEl value 가져와서 getMovies에 넣기
 // loading 중일 때 .loader 삽입, fetch되면 .loader 제거
-
 const SearchEl = document.querySelector(".search__btn");
 const resultDiv = document.querySelector(".result");
-const detectorEl = document.createElement("div");
-detectorEl.classList.add("scroll-detecting");
 
 let count = 1;
 let getData;
 let title, year;
+let isFirst = false;
+let loaded = false;
 const loaderDiv = document.createElement("div");
 const loaderEl = document.createElement("div");
 loaderDiv.classList.add("loader-container");
@@ -61,14 +60,13 @@ loaderEl.classList.add("loader");
 const noResultEl = document.createElement("p");
 noResultEl.classList.add("no-result");
 noResultEl.textContent = "검색 키워드를 입력해주세요!";
-const moreBtn = document.createElement("button");
-moreBtn.classList.add("more");
-moreBtn.textContent = "더보기";
 
 SearchEl.addEventListener("click", async function (e) {
   e.preventDefault();
   title = inputEl.value;
   year = selectEl.value;
+  isFirst = true;
+
   if (title === "") {
     resultDiv.append(noResultEl);
     return;
@@ -77,11 +75,11 @@ SearchEl.addEventListener("click", async function (e) {
     resultDiv.innerHTML = "";
     loaderDiv.append(loaderEl);
     resultDiv.append(loaderDiv);
-    await getMovies(title, year, count, true);
+    await getMovies(title, year, count);
 
-    if (getData.Response === "True" && totalPages > 1) {
+    if (getData?.Response === "True" && totalPages > 1) {
       count++;
-      getMovies(title, year, count, false);
+      getMovies(title, year, count);
     }
   }
 });
@@ -92,7 +90,7 @@ let movies = [];
 let totalResults;
 let totalPages;
 
-async function getMovies(title, year, count, isFirst) {
+async function getMovies(title, year, count) {
   const s = `&s=${title}`;
   const y = year === "All Years" ? "" : `&y=${year}`;
   const page = `&page=${count}`;
@@ -105,9 +103,9 @@ async function getMovies(title, year, count, isFirst) {
         movies = data.Search;
         totalResults = data.totalResults;
         totalPages = Math.ceil(totalResults / 10);
-        setMovies(isFirst, data);
+        setMovies(data);
         getData = data;
-      } else if (isFirst === true) {
+      } else if (isFirst) {
         noResultEl.textContent =
           title.length < 3
             ? `3글자 이상 입력해주세요.`
@@ -115,6 +113,7 @@ async function getMovies(title, year, count, isFirst) {
         resultDiv.innerHTML = "";
         resultDiv.append(noResultEl);
       }
+      isFirst = false;
     });
 }
 
@@ -124,9 +123,11 @@ totalEl.classList.add("total");
 
 const moviesEl = document.createElement("ul");
 moviesEl.classList.add("movie-list");
-
 // 받아온 데이터 카드 섹션에 붙여넣기
-function setMovies(isFirst) {
+function setMovies() {
+  // 불러오는 동안에는 무한스크롤 불가
+  loaded = false;
+
   totalEl.innerHTML = `총 <span>${totalResults}</span>개의 검색결과가 있습니다.`;
 
   const liEls = movies.map((movie) => {
@@ -154,37 +155,30 @@ function setMovies(isFirst) {
     return liEl;
   });
 
+  // search 버튼 눌러서 데이터 불러올 때 이전 요소 삭제
   if (isFirst) {
     resultDiv.innerHTML = "";
     moviesEl.innerHTML = "";
   }
-  moviesEl.append(...liEls, detectorEl);
+  moviesEl.append(...liEls);
   resultDiv.append(totalEl, moviesEl);
   popup();
 
-  // 무한스크롤 구현
-  let callback = (entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      count++;
-      console.log(count);
-      getMovies(title, year, count, false);
-      return count;
-    });
-  };
-
-  let options = {
-    root: null,
-    rootMargin: "0px",
-    threshold: 0.5,
-  };
-
-  let observer = new IntersectionObserver(callback, options);
-
-  // 타겟 요소 관찰 시작
-  let target = document.querySelector(".movie-list").lastElementChild;
-  observer.observe(target);
+  // 무한스크롤 가능하게
+  loaded = true;
 }
+// 무한스크롤 구현
+window.addEventListener("scroll", function () {
+  if (
+    window.scrollY >=
+    document.documentElement.scrollHeight - window.innerHeight
+  ) {
+    if (loaded) {
+      count += 1;
+      getMovies(title, year, count);
+    }
+  }
+});
 
 // 카드 클릭했을 때 모달창 등장 및 document scoll 처리, to-top 버튼 숨김
 const body = document.querySelector("body");
@@ -196,6 +190,7 @@ modalWrapper.id = "modal";
 modalEl.classList.add("modal-container");
 modalOverlayEl.classList.add("modal-overlay");
 
+// 모달 창 띄우기
 function popup() {
   const cardEl = moviesEl.querySelectorAll("li");
 
@@ -214,24 +209,9 @@ function popup() {
       getMovieInfo(movieId);
     });
   }
-
-  // 모달 창 밖 영역 클릭하면 모달창 꺼지게 하기
-  modalOverlayEl.addEventListener("click", function () {
-    wrap.removeChild(modalWrapper);
-    body.classList.remove("stop-scrolling");
-    toTopEl.classList.remove("hide");
-  });
-
-  // esc 버튼 누르면 모달창 꺼지게 하기
-  window.addEventListener("keyup", function (e) {
-    if (e.key === "Escape") {
-      wrap.removeChild(modalWrapper);
-      body.classList.remove("stop-scrolling");
-      toTopEl.classList.remove("hide");
-    }
-  });
 }
 
+// 영화에 대한 상세 정보 가져오기
 async function getMovieInfo(movieId) {
   await fetch(`https://omdbapi.com/?apikey=7035c60c&i=${movieId}&plot=full`)
     .then((response) => {
@@ -242,14 +222,16 @@ async function getMovieInfo(movieId) {
     });
 }
 
+// 가져온 상세 정보 모달 창에 셋팅
 function setMovieInfo(movie) {
-  // 이미지 고해상도 출력
+  // 이미지 크기 변경
   const background = document.createElement("div");
   const url =
     movie.Poster === "N/A"
       ? require("/images/no_images.png")
       : movie.Poster.replace("X300", "X640");
 
+  // 생성할 요소들
   const infoInnerEl = document.createElement("div");
   const imgEl = document.createElement("img");
   const h2El = document.createElement("h2");
@@ -263,7 +245,9 @@ function setMovieInfo(movie) {
   const rateEl = document.createElement("span");
   const plotEl = document.createElement("p");
   const castEl = document.createElement("div");
+  const closeBtn = document.createElement("div");
 
+  // 디자인을 위한 클래스 부여
   innerLEl.classList.add("inner-left");
   innerREl.classList.add("inner-right");
   background.classList.add("background");
@@ -273,6 +257,7 @@ function setMovieInfo(movie) {
   plotEl.classList.add("plot");
   rateEl.classList.add("rate");
   castEl.classList.add("cast");
+  closeBtn.classList.add("close-btn");
 
   imgEl.src = url;
   h2El.textContent = movie.Title;
@@ -283,6 +268,10 @@ function setMovieInfo(movie) {
   plotEl.textContent = movie.Plot === "N/A" ? "" : movie.Plot;
   rateEl.innerHTML = `<span>&#9733;</span> ${movie.imdbRating}`;
   castEl.innerHTML = `<h3>Casts</h3><p>${movie.Actors}</p>`;
+  closeBtn.innerHTML = `<span class="material-symbols-outlined">
+  close
+  </span>`;
+
   innerLEl.append(imgEl);
   infoListEl.append(yearEl, timeEl, directorEl);
   innerREl.append(h2El, infoListEl, genreListEl, rateEl, plotEl, castEl);
@@ -290,5 +279,28 @@ function setMovieInfo(movie) {
   infoInnerEl.append(innerLEl, innerREl);
 
   modalEl.innerHTML = "";
-  modalEl.append(background, infoInnerEl);
+  modalEl.append(background, infoInnerEl, closeBtn);
+
+  // 모달 창 밖 영역 클릭하면 모달창 꺼지게 하기
+  modalOverlayEl.addEventListener("click", function () {
+    wrap.removeChild(modalWrapper);
+    body.classList.remove("stop-scrolling");
+    toTopEl.classList.remove("hide");
+  });
+
+  // esc 키 누르면 모달창 꺼지게 하기
+  window.addEventListener("keyup", function (e) {
+    if (e.key === "Escape") {
+      wrap.removeChild(modalWrapper);
+      body.classList.remove("stop-scrolling");
+      toTopEl.classList.remove("hide");
+    }
+  });
+
+  // closeBtn 누르면 모달창 꺼지게 하기
+  closeBtn.addEventListener("click", function () {
+    wrap.removeChild(modalWrapper);
+    body.classList.remove("stop-scrolling");
+    toTopEl.classList.remove("hide");
+  });
 }

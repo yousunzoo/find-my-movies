@@ -355,6 +355,15 @@ main {
         }
       }
     }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      span {
+        font-size: 40px;
+      }
+    }
   }
 }
 
